@@ -1,0 +1,21 @@
+//
+//  ProfileViewController.swift
+//  Twitter Clone
+//
+//  Created by Saadet Şimşek on 03/06/2024.
+//
+
+import UIKit
+
+class ProfileViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        view.backgroundColor = .systemBackground
+        title = "Profile"
+    }
+    
+
+
+}
