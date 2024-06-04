@@ -30,30 +30,8 @@ class ProfileTableViewHeader: UIView {
     
     }
     
-    private var selectedTab: Int = 0 {
-        didSet{
-            print(selectedTab)
-        }
-    }
-    
-    private var tabs: [UIButton] = ["Tweets", "Tweets & Replies", "Media", "Likes"] // ayrı ayrı buton oluşturmak yerine tek bir butonda hepsini hallettin
-        .map { buttonTitle in
-            let button = UIButton(type: .system)
-            button.setTitle(buttonTitle, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-            button.tintColor = .label
-            button.translatesAutoresizingMaskIntoConstraints = false
-            return button
-        }
-    
-    private lazy var sectionStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: tabs) // hepsini grup yaptık
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.distribution = .equalSpacing
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        return stackView
-    }()
+    private var leadingAnchors: [NSLayoutConstraint] = []
+    private var trailingAnchors: [NSLayoutConstraint] = []
     
     private let followersTextLabel: UILabel = {
         let label = UILabel()
@@ -155,6 +133,51 @@ class ProfileTableViewHeader: UIView {
         imageView.image = UIImage(named: "header")
         return imageView
     }()
+    private var selectedTab: Int = 0 {
+         didSet {
+             for i in 0..<tabs.count {// seçilen butonun renginin değişmesi
+                 UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) { [weak self] in
+                     self?.sectionStackView.arrangedSubviews[i].tintColor = i == self?.selectedTab ? .label : .secondaryLabel
+                     //indicatorun değişmesi
+                     self?.leadingAnchors[i].isActive = i == self?.selectedTab ? true : false
+                     self?.trailingAnchors[i].isActive = i == self?.selectedTab ? true : false
+                     self?.layoutIfNeeded()
+                 } completion: { _ in
+                     
+                 }
+
+             }
+         }
+     }
+
+    private var tabs: [UIButton] = ["Tweets", "Tweets & Replies", "Media", "Likes"] // ayrı ayrı buton oluşturmak yerine tek bir butonda hepsini hallettin
+        .map { buttonTitle in
+            let button = UIButton(type: .system)
+            button.setTitle(buttonTitle, for: .normal)
+            button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+            button.tintColor = .label
+            button.translatesAutoresizingMaskIntoConstraints = false
+            return button
+        }
+    
+    private lazy var sectionStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: tabs) // hepsini grup yaptık
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.distribution = .equalSpacing
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        return stackView
+    }()
+    
+    private let indicator: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(red: 29/255,
+                                       green: 161/255,
+                                       blue: 242/255,
+                                       alpha: 1)
+        return view
+    }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -170,6 +193,7 @@ class ProfileTableViewHeader: UIView {
         addSubview(followerCountLabel)
         addSubview(followersTextLabel)
         addSubview(sectionStackView)
+        addSubview(indicator)
         
         configureConstraits()
         configureStackButton()
@@ -185,6 +209,13 @@ class ProfileTableViewHeader: UIView {
             guard let button = button as? UIButton else {
                 return
             }
+            
+            if i == selectedTab { //rek değişmesi
+                button.tintColor = .label
+            }else{
+                button.tintColor = .secondaryLabel
+            }
+            
             button.addTarget(self,
                              action: #selector(didTapTab(_:)),
                              for: .touchUpInside)
@@ -211,6 +242,14 @@ class ProfileTableViewHeader: UIView {
     }
     
     private func configureConstraits(){
+        
+        for i in 0..<tabs.count {
+            let leadingAnchor = indicator.leadingAnchor.constraint(equalTo: sectionStackView.arrangedSubviews[i].leadingAnchor)
+                   leadingAnchors.append(leadingAnchor)
+            let trailingAnchor = indicator.trailingAnchor.constraint(equalTo: sectionStackView.arrangedSubviews[i].trailingAnchor)
+                   trailingAnchors.append(trailingAnchor)
+               }
+        
         let profileHeaderImageViewConstraits = [
             profileHeaderImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             profileHeaderImageView.topAnchor.constraint(equalTo: topAnchor),
@@ -278,6 +317,13 @@ class ProfileTableViewHeader: UIView {
             sectionStackView.heightAnchor.constraint(equalToConstant: 35)
         ]
         
+        let indicatorConstraints = [
+            leadingAnchors[0],
+            trailingAnchors[0],
+            indicator.topAnchor.constraint(equalTo: sectionStackView.bottomAnchor, constant: -4),
+            indicator.heightAnchor.constraint(equalToConstant: 4)
+        ]
+        
         NSLayoutConstraint.activate(profileHeaderImageViewConstraits)
         NSLayoutConstraint.activate(profileAvatarImageViewConstraits)
         NSLayoutConstraint.activate(displayNameLabelConstraits)
@@ -290,6 +336,8 @@ class ProfileTableViewHeader: UIView {
         NSLayoutConstraint.activate(followerCountLabelConstraits)
         NSLayoutConstraint.activate(followersTextLabelConstraits)
         NSLayoutConstraint.activate(sectionStackViewConstraits)
+        
+        NSLayoutConstraint.activate(indicatorConstraints)
         
     }
 
