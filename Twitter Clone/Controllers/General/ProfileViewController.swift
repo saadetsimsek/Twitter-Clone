@@ -9,6 +9,16 @@ import UIKit
 
 class ProfileViewController: UIViewController {
     
+    private var isStatusBarHidden: Bool = true
+    
+    private let statusBar: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemBackground
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.opacity = 0
+        return view
+    }()
+    
     private let profileTableView: UITableView = {
         let tableView = UITableView()
         tableView.register(TweetTableViewCell.self, forCellReuseIdentifier: TweetTableViewCell.identifier)
@@ -23,16 +33,20 @@ class ProfileViewController: UIViewController {
         navigationItem.title = "Profile"
         
         view.addSubview(profileTableView)
+        view.addSubview(statusBar)
         
         let headerView = ProfileTableViewHeader(frame: CGRect(x: 0,
                                                      y: 0,
                                                      width: profileTableView.frame.width,
-                                                     height: 350))
+                                                     height: 400))
         
         profileTableView.delegate = self
         profileTableView.dataSource = self
         
         profileTableView.tableHeaderView = headerView
+        
+        profileTableView.contentInsetAdjustmentBehavior = .never
+        navigationController?.navigationBar.isHidden = true
         
         configureConstraits()
     }
@@ -45,7 +59,16 @@ class ProfileViewController: UIViewController {
             profileTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             profileTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ]
+        
+        let statusBarConstraits = [
+            statusBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            statusBar.topAnchor.constraint(equalTo: view.topAnchor),
+            statusBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            statusBar.heightAnchor.constraint(equalToConstant: view.bounds.height > 800 ? 40 : 20)
+        ]
+        
         NSLayoutConstraint.activate(profileTableViewConstraits)
+        NSLayoutConstraint.activate(statusBarConstraits)
     }
 
 
@@ -61,5 +84,26 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
             return UITableViewCell()
         }
         return cell
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let yPosition = scrollView.contentOffset.y
+        
+        if yPosition > 150 && isStatusBarHidden {
+            isStatusBarHidden = false
+            UIView.animate(withDuration: 0.3,
+                           delay: 0,
+                           options: .curveLinear) { [weak self] in
+                self?.statusBar.layer.opacity = 1
+            } completion: {_ in }
+        }
+        else if yPosition < 0 && !isStatusBarHidden {
+            isStatusBarHidden = true
+            UIView.animate(withDuration: 0.3,
+                           delay: 0,
+                           options: .curveLinear) { [weak self] in
+                self?.statusBar.layer.opacity = 0
+            } completion: { _ in }
+        }
     }
 }
