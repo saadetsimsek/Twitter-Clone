@@ -10,7 +10,7 @@ import Combine
 
 class RegisterViewController: UIViewController {
     
-    private var viewModel = RegisterViewViewModel()
+    private var viewModel = AuthenticationViewViewModel()
     private var subscriptions: Set<AnyCancellable> = []
     
     private let registerTitleLabel: UILabel = {
@@ -89,25 +89,48 @@ class RegisterViewController: UIViewController {
                                     action: #selector(didChangePasswordTextfield),
                                     for: .editingChanged)
         
-        viewModel.$isRegistrationFormValid.sink { [weak self]  validationState in
+        viewModel.$isAuthenticationFormValid.sink { [weak self]  validationState in
             self?.registerButton.isEnabled = validationState
         } // ?
         .store(in: &subscriptions)
         
         viewModel.$user.sink { [weak self] user in
-            print(user)
+           // print(user)
+            guard user != nil else {return}
+            guard let vc = self?.navigationController?.viewControllers.first as? OnboardingViewController else {
+                return
+            }
+            vc.dismiss(animated: true)
+        }
+        .store(in: &subscriptions)
+        
+        viewModel.$error.sink {[weak self] errorString in
+            guard let error = errorString else {return}
+            self?.presentAlert(with: error)
         }
         .store(in: &subscriptions)
     }
     
+    private func presentAlert(with error: String){ //girdiğiniz email kayıtlı hata mesajı
+        let alert = UIAlertController(title: "Error",
+                                      message: error,
+                                      preferredStyle: .alert)
+        let okayButton = UIAlertAction(title: "Ok",
+                                       style: .default,
+                                       handler: nil)
+        alert.addAction(okayButton)
+        present(alert, animated: true)
+        
+    }
+    
     @objc private func didChangeEmailTextfield(){
         viewModel.email = emailTextField.text
-        viewModel.validateRegistrationForm()
+        viewModel.validateAuthenticationForm()
     }
     
     @objc private func didChangePasswordTextfield(){
         viewModel.password = passwordTextField.text
-        viewModel.validateRegistrationForm()
+        viewModel.validateAuthenticationForm()
     }
     
     @objc private func didTapToDismiss(){

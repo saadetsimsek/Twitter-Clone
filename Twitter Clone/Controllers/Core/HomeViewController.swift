@@ -26,6 +26,11 @@ class HomeViewController: UIViewController {
         timeLineTableView.dataSource = self
         
         configureNavigationBar()
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "rectangle.portrait.and.arrow.right"),
+                                                            style: .plain,
+                                                            target: self,
+                                                            action: #selector(didTapSignOut))
     }
 
     override func viewDidLayoutSubviews() {
@@ -36,7 +41,11 @@ class HomeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = false
-        
+        handleAuthentication()
+     
+    }
+    
+    private func handleAuthentication(){
         if Auth.auth().currentUser == nil {
             let vc = UINavigationController(rootViewController: OnboardingViewController())
             vc.modalPresentationStyle = .fullScreen
@@ -70,6 +79,11 @@ class HomeViewController: UIViewController {
     @objc private func didTapProfile(){
         let vc = ProfileViewController()
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func didTapSignOut(){
+        try? Auth.auth().signOut()
+        handleAuthentication()
     }
 
 }
