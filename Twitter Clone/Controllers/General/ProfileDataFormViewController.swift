@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class ProfileDataFormViewController: UIViewController {
     
     private let scrollView: UIScrollView = {
@@ -73,6 +74,38 @@ class ProfileDataFormViewController: UIViewController {
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
+    
+    private let bioTextView: UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.backgroundColor = .secondarySystemFill
+        textView.layer.masksToBounds = true
+        textView.layer.cornerRadius = 8
+        textView.textContainerInset = .init(top: 15,
+                                             left: 15,
+                                             bottom: 15,
+                                             right: 15)
+        textView.text = "Tell the world about yourself"
+        textView.textColor = .gray
+        textView.font = .systemFont(ofSize: 16)
+        return textView
+    }()
+    
+    private let submitButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Submit", for: .normal)
+        button.tintColor = .label
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        button.backgroundColor = UIColor(red: 29/255,
+                                         green: 161/255,
+                                         blue: 242/255,
+                                         alpha: 1)
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 25
+        button.isEnabled = false
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,12 +116,25 @@ class ProfileDataFormViewController: UIViewController {
         scrollView.addSubview(avatarPlaceholderImageView)
         scrollView.addSubview(displayNameTextField)
         scrollView.addSubview(userNameTextField)
+        scrollView.addSubview(bioTextView)
+        scrollView.addSubview(submitButton)
         
         isModalInPresentation = true // aşağı kaydırdığınızda orada kalmıyor yukarı sabitleniyor
         
+        bioTextView.delegate = self
+        displayNameTextField.delegate = self
+        userNameTextField.delegate = self
+        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapDismiss)))
+        
         configureConstraints()
+   
     }
     
+    @objc private func didTapDismiss(){
+        view.endEditing(true)
+    }
+
 
     private func configureConstraints(){
         
@@ -125,11 +171,59 @@ class ProfileDataFormViewController: UIViewController {
             userNameTextField.heightAnchor.constraint(equalToConstant: 50)
         ]
         
+        let bioTextViewConstraints = [
+            bioTextView.leadingAnchor.constraint(equalTo: displayNameTextField.leadingAnchor),
+            bioTextView.trailingAnchor.constraint(equalTo: displayNameTextField.trailingAnchor),
+            bioTextView.topAnchor.constraint(equalTo: userNameTextField.bottomAnchor, constant: 20),
+            bioTextView.heightAnchor.constraint(equalToConstant: 150)
+        ]
+        
+        let submitButtonConstraints = [
+            submitButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            submitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            submitButton.heightAnchor.constraint(equalToConstant: 50),
+            submitButton.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -20)
+        ]
+        
         
         NSLayoutConstraint.activate(scrollViewConstraints)
         NSLayoutConstraint.activate(hintLabelConstraints)
         NSLayoutConstraint.activate(avatarPlaceholderImageViewConstraints)
         NSLayoutConstraint.activate(displayNameTextFieldConstraints)
         NSLayoutConstraint.activate(userNameTextFieldConstraints)
+        NSLayoutConstraint.activate(bioTextViewConstraints)
+        NSLayoutConstraint.activate(submitButtonConstraints)
+    }
+}
+
+extension ProfileDataFormViewController: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        scrollView.setContentOffset(CGPoint(x: 0,
+                                            y: textView.frame.origin.y - 100), animated: true)
+        if textView.textColor == .gray {
+            textView.textColor = .label
+            textView.text = ""
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+      
+        if textView.text.isEmpty {
+            textView.text = "Tell the world about yourself!" //eğer yazma işlemi tamamen silindiyse yerine tekrar bu yazıyor
+            textView.textColor = .gray
+        }
+    }
+}
+
+extension ProfileDataFormViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        scrollView.setContentOffset(CGPoint(x: 0,
+                                            y: textField.frame.origin.y - 100), animated: true)
+        // yazılanları görmek için textfieldlar yukarı kaydırılıyor
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
     }
 }
