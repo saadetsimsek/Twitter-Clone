@@ -7,9 +7,12 @@
 
 import UIKit
 import FirebaseAuth
+import Combine
 
 class HomeViewController: UIViewController {
     
+    private var viewModel = HomeViewViewModel()
+    private var subscriptions: Set<AnyCancellable> = []
     
     private let timeLineTableView : UITableView = {
         let tableView = UITableView()
@@ -31,6 +34,8 @@ class HomeViewController: UIViewController {
                                                             style: .plain,
                                                             target: self,
                                                             action: #selector(didTapSignOut))
+        
+        bindViews()
     }
 
     override func viewDidLayoutSubviews() {
@@ -42,6 +47,7 @@ class HomeViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = false
         handleAuthentication()
+        viewModel.retreiveUser()
      
     }
     
@@ -52,6 +58,25 @@ class HomeViewController: UIViewController {
             present(vc, animated: true)
         }
     }
+    
+    private func bindViews(){ //listen, eğer kullanıcı giriş yaparsa
+        viewModel.$user.sink { [weak self] user in // $ publisher
+            guard let user = user else {
+                return
+            }
+            if !user.isUserOnboarded {
+                self?.completeUsersOnboarding()
+            }
+        }
+        .store(in: &subscriptions)
+    }
+    
+    func completeUsersOnboarding(){
+        let vc = ProfileDataFormViewController()
+        present(vc, animated: true)
+    }
+    
+    
     
     private func configureNavigationBar(){
         let size: CGFloat = 36
