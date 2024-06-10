@@ -83,6 +83,8 @@ class ProfileViewController: UIViewController {
             
             self?.headerView.profileAvatarImageView.sd_setImage(with: URL(string: user.avatarPath)) //profile picture 
             
+            self?.headerView.joinedDateLabel.text = "Joined \(self?.viewModel.getFormattedDate(with: user.createdOn) ?? "")"
+            
         }
         .store(in: &subscription)
     }
