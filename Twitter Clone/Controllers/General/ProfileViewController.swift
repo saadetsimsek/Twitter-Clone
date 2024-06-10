@@ -6,10 +6,20 @@
 //
 
 import UIKit
+import Combine
+import SDWebImage
 
 class ProfileViewController: UIViewController {
     
     private var isStatusBarHidden: Bool = true
+    private var viewModel = ProfileViewViewModel()
+    
+    private var subscription: Set<AnyCancellable> = []
+    
+    private lazy var headerView = ProfileTableViewHeader(frame: CGRect(x: 0,
+                                                                  y: 0,
+                                                                  width: profileTableView.frame.width,
+                                                                  height: 400))
     
     private let statusBar: UIView = {
         let view = UIView()
@@ -35,13 +45,15 @@ class ProfileViewController: UIViewController {
         view.addSubview(profileTableView)
         view.addSubview(statusBar)
         
-        let headerView = ProfileTableViewHeader(frame: CGRect(x: 0,
-                                                     y: 0,
-                                                     width: profileTableView.frame.width,
-                                                     height: 400))
         
         profileTableView.delegate = self
         profileTableView.dataSource = self
+        
+    /*    let headerView = ProfileTableViewHeader(frame: CGRect(x: 0,
+                                                              y: 0,
+                                                              width: profileTableView.frame.width,
+                                                              height: 400))
+     */
         
         profileTableView.tableHeaderView = headerView
         
@@ -49,6 +61,30 @@ class ProfileViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
         
         configureConstraits()
+        bindViews()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.retreiveUser()
+    }
+    
+    private func bindViews(){
+        
+        viewModel.$user.sink { [weak self] user in
+            guard let user = user else {
+                return
+            }
+            self?.headerView.displayNameLabel.text = user.displayName
+            self?.headerView.usernameLabel.text = "@\(user.username)"
+            self?.headerView.followerCountLabel.text = "\(user.followersCount)"
+            self?.headerView.followingCountLabel.text = "\(user.followingCount)"
+            self?.headerView.userBioLabel.text = user.bio
+            
+            self?.headerView.profileAvatarImageView.sd_setImage(with: URL(string: user.avatarPath)) //profile picture 
+            
+        }
+        .store(in: &subscription)
     }
     
     private func configureConstraits(){
