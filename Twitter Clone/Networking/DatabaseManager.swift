@@ -17,6 +17,7 @@ class DatabaseManager {
     
     let db = Firestore.firestore() //database erişme
     let usersPath: String = "users" // databasedeki veri tutucu collectionlar
+    let tweetsPath: String = "tweets"
     
     func collectionUsers(add user: User) -> AnyPublisher<Bool, Error> {
         let twitterUser = TwitterUser(from: user)
@@ -41,4 +42,10 @@ class DatabaseManager {
             .map{ _ in true}
             .eraseToAnyPublisher()
     }
+    
+    func collectionTweets(dispatch tweet: Tweet) -> AnyPublisher<Bool, Error> {
+        db.collection(tweetsPath).document(tweet.id).setData(from: tweet)
+            .map { _ in true }
+            .eraseToAnyPublisher()
+        }
 }
