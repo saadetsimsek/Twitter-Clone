@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6A0344162C26EAB9007D7C52 /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0344152C26EAB9007D7C52 /* SearchResultsViewController.swift */; };
+		6A0344182C2715EC007D7C52 /* SearchViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0344172C2715EC007D7C52 /* SearchViewViewModel.swift */; };
 		6A1116082C10561C00A74390 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A1116072C10561C00A74390 /* GoogleService-Info.plist */; };
 		6A11160B2C10596200A74390 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 6A11160A2C10596200A74390 /* FirebaseAuth */; };
 		6A11160D2C10596200A74390 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 6A11160C2C10596200A74390 /* FirebaseAuthCombine-Community */; };
@@ -69,6 +71,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6A0344152C26EAB9007D7C52 /* SearchResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsViewController.swift; sourceTree = "<group>"; };
+		6A0344172C2715EC007D7C52 /* SearchViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewViewModel.swift; sourceTree = "<group>"; };
 		6A1116072C10561C00A74390 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6A11161D2C105EDD00A74390 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		6A11161F2C1067ED00A74390 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
@@ -160,6 +164,7 @@
 				6AE9ACFD2C1440D1001604D4 /* ProfileDataFormViewViewModel.swift */,
 				6AF8AF1E2C163E87009AA090 /* ProfileViewViewModel.swift */,
 				6AB579A52C1776E1003E1B95 /* TweetComposeViewViewModel.swift */,
+				6A0344172C2715EC007D7C52 /* SearchViewViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -180,6 +185,7 @@
 				6A15D16D2C0DFE720041A1AD /* ProfileViewController.swift */,
 				6ADFA9182C134B6F00215C6C /* ProfileDataFormViewController.swift */,
 				6A370B0C2C170920004168EF /* TweetComposeViewController.swift */,
+				6A0344152C26EAB9007D7C52 /* SearchResultsViewController.swift */,
 			);
 			path = General;
 			sourceTree = "<group>";
@@ -442,6 +448,7 @@
 				6AE9AD002C14D375001604D4 /* StorageManager.swift in Sources */,
 				6AD1C3212C11B3F500E29393 /* LoginViewController.swift in Sources */,
 				6AE903242C1240D000D61CE1 /* DatabaseManager.swift in Sources */,
+				6A0344162C26EAB9007D7C52 /* SearchResultsViewController.swift in Sources */,
 				6AA53E592C057FC8001E2B67 /* NotificationViewController.swift in Sources */,
 				6AF8AF1F2C163E87009AA090 /* ProfileViewViewModel.swift in Sources */,
 				6A1116202C1067ED00A74390 /* RegisterViewController.swift in Sources */,
@@ -459,6 +466,7 @@
 				6ADFA9192C134B6F00215C6C /* ProfileDataFormViewController.swift in Sources */,
 				6A11161E2C105EDD00A74390 /* OnboardingViewController.swift in Sources */,
 				6AE903222C123F9200D61CE1 /* TwitterUser.swift in Sources */,
+				6A0344182C2715EC007D7C52 /* SearchViewViewModel.swift in Sources */,
 				6ADFA9172C13023400215C6C /* HomeViewViewModel.swift in Sources */,
 				6AD3414C2C073E7100527C5A /* TweetTableViewCell.swift in Sources */,
 			);
