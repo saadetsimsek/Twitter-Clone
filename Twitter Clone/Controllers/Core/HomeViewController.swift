@@ -134,7 +134,8 @@ class HomeViewController: UIViewController {
     }
     
     @objc private func didTapProfile(){
-        let vc = ProfileViewController()
+        let viewModel = ProfileViewViewModel()
+        let vc = ProfileViewController(viewModel: viewModel)
         navigationController?.pushViewController(vc, animated: true)
     }
     

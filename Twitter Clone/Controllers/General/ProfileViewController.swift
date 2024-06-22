@@ -12,9 +12,18 @@ import SDWebImage
 class ProfileViewController: UIViewController {
     
     private var isStatusBarHidden: Bool = true
-    private var viewModel = ProfileViewViewModel()
+    private var viewModel: ProfileViewViewModel
     
     private var subscription: Set<AnyCancellable> = []
+    
+    init(viewModel: ProfileViewViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private lazy var headerView = ProfileTableViewHeader(frame: CGRect(x: 0,
                                                                   y: 0,
@@ -62,14 +71,19 @@ class ProfileViewController: UIViewController {
         
         configureConstraits()
         bindViews()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        
         viewModel.retreiveUser()
     }
     
+    
     private func bindViews(){
+        
+        viewModel.$tweets.sink {[weak self] _ in
+            DispatchQueue.main.async {
+                self?.profileTableView.reloadData()
+            }
+        }
+        .store(in: &subscription)
         
         viewModel.$user.sink { [weak self] user in
             guard let user = user else {
@@ -114,13 +128,18 @@ class ProfileViewController: UIViewController {
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return viewModel.tweets.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TweetTableViewCell.identifier, for: indexPath) as? TweetTableViewCell else{
             return UITableViewCell()
         }
+        let tweet = viewModel.tweets[indexPath.row]
+        cell.configureTweet(with: tweet.author.displayName,
+                            username: tweet.author.username,
+                            tweetTextContext: tweet.tweetContent,
+                            avatarPath: tweet.author.avatarPath)
         return cell
     }
     
