@@ -14,7 +14,7 @@ class SearchResultsViewController: UIViewController {
     private let searchResultsTableView: UITableView = {
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        table.register(UserTableViewCell.self, forCellReuseIdentifier: UserTableViewCell.identifier)
         return table
     }()
 
@@ -24,7 +24,9 @@ class SearchResultsViewController: UIViewController {
         view.addSubview(searchResultsTableView)
     
         configureConstraints()
+        
         searchResultsTableView.dataSource = self
+        searchResultsTableView.delegate = self
 
     }
     
@@ -51,16 +53,22 @@ class SearchResultsViewController: UIViewController {
 
 }
 
-extension SearchResultsViewController: UITableViewDataSource {
+extension SearchResultsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return users.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier, for: indexPath) as? UserTableViewCell else{
+            return UITableViewCell()
+        }
         let user = users[indexPath.row]
-        cell.textLabel?.text = user.displayName
+        cell.configure(with: user)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 90
     }
 
 }

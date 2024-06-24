@@ -26,7 +26,18 @@ class SearchViewController: UIViewController {
         label.font = .systemFont(ofSize: 32, weight: .bold)
         return label
     }()
-
+    
+    let viewModel: SearchViewViewModel
+    
+    init(viewModel: SearchViewViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -54,12 +65,15 @@ class SearchViewController: UIViewController {
 
 extension SearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        guard let resultsViewController = searchController.searchResultsController as? SearchResultsViewController
+        guard let resultsViewController = searchController.searchResultsController as? SearchResultsViewController,
+                let query = searchController.searchBar.text
         else{
             return
         }
-        
-        resultsViewController.update(users: <#T##[TwitterUser]#>)
+        viewModel.search(with: query) { users in
+            resultsViewController.update(users: users)
+        }
+       
     }
     
     
