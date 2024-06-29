@@ -79,7 +79,7 @@ class UserTableViewCell: UITableViewCell {
     func configure(with user: TwitterUser){
         avatarImageView.sd_setImage(with: URL(string: user.avatarPath))
         displayNameLabel.text = user.displayName
-        usernameLabel.text = user.username
+        usernameLabel.text = "@\(user.username)"
     }
     
 }

@@ -11,14 +11,18 @@ import FirebaseAuth
 
 final class ProfileViewViewModel: ObservableObject {
     
-    @Published var user: TwitterUser?
+    @Published var user: TwitterUser
     @Published var error: String?
     @Published var tweets: [Tweet] = []
     
     private var subscriptions: Set <AnyCancellable> = []
     
+    init(user: TwitterUser) {
+        self.user = user
+    }
     
-    func retreiveUser(){
+    
+/*   func retreiveUser(){
         guard let id = Auth.auth().currentUser?.uid else {return}
         DatabaseManager.shared.collectionUsers(retreive: id)
             .sink { [weak self] completion in
@@ -31,9 +35,9 @@ final class ProfileViewViewModel: ObservableObject {
             }
             .store(in: &subscriptions)
     }
-    
+    */
     func fetchUserTweets(){
-        guard let user = user else {return}
+       // guard let user = user else {return}
         DatabaseManager.shared.collectionTweets(retreiveTweets: user.id)
             .sink { completion in
                 if case .failure(let error) = completion {

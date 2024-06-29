@@ -134,6 +134,7 @@ class ProfileTableViewHeader: UIView {
         imageView.image = UIImage(named: "header")
         return imageView
     }()
+    
     private var selectedTab: Int = 0 {
          didSet {
              for i in 0..<tabs.count {// seçilen butonun renginin değişmesi
@@ -208,7 +209,7 @@ class ProfileTableViewHeader: UIView {
         configureConstraits()
         configureStackButton()
         
-        configureButtonAsUnFollowed()
+        configureButtonAsFollowed()
         
     }
     
@@ -234,7 +235,7 @@ class ProfileTableViewHeader: UIView {
         }
     }
     
-    private func configureButtonAsFollowed(){
+    private func configureButtonUnFollowed(){
         followButton.setTitle("Unfollow", for: .normal)
         followButton.backgroundColor = .systemBackground
         followButton.layer.borderWidth = 2
@@ -243,7 +244,7 @@ class ProfileTableViewHeader: UIView {
         
     }
     
-    private func configureButtonAsUnFollowed(){
+    private func configureButtonAsFollowed(){
         followButton.setTitle("Follow", for: .normal)
         followButton.backgroundColor = .twitterBlueColor
         followButton.setTitleColor(.white, for: .normal)

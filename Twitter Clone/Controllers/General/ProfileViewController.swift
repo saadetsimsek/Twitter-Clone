@@ -72,7 +72,8 @@ class ProfileViewController: UIViewController {
         configureConstraits()
         bindViews()
         
-        viewModel.retreiveUser()
+     //   viewModel.retreiveUser()
+        viewModel.fetchUserTweets()
     }
     
     
@@ -86,9 +87,9 @@ class ProfileViewController: UIViewController {
         .store(in: &subscription)
         
         viewModel.$user.sink { [weak self] user in
-            guard let user = user else {
-                return
-            }
+          //  guard let user = user else {
+          //      return
+          //  }
             self?.headerView.displayNameLabel.text = user.displayName
             self?.headerView.usernameLabel.text = "@\(user.username)"
             self?.headerView.followerCountLabel.text = "\(user.followersCount)"
