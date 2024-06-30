@@ -102,6 +102,30 @@ class ProfileViewController: UIViewController {
             
         }
         .store(in: &subscription)
+        
+        viewModel.$currentFollowingState.sink { [weak self] state in
+            switch state {
+            case .personal:
+                self?.headerView.configureAsPersonal()
+            case .userIsFollowed:
+                self?.headerView.configureButtonUnFollowed()
+            case .userIsUnFollowed:
+                self?.headerView.configureButtonAsFollowed()
+            }
+        }
+        .store(in: &subscription)
+        
+        headerView.followButtonActionPublisher.sink {[weak self] state in
+            switch state {
+            case .userIsFollowed:
+                self?.viewModel.unFollow()
+            case .userIsUnFollowed:
+                self?.viewModel.follow()
+            case .personal:
+                return
+            }
+        }
+        .store(in: &subscription)
     }
     
     private func configureConstraits(){
